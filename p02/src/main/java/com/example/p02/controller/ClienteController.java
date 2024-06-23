@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.p02.model.Cliente;
 import com.example.p02.service.ClienteService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller     //  @Controller para que funcione mostrarHTML
@@ -46,11 +47,29 @@ public class ClienteController {
         return "lista"; // lista.html
     }
 
-    @GetMapping("/ordenado")
-    public String getMethodName(Model model) {
-        model.addAttribute("MayusClientes", clienteService.getClientes());
-        return "lista";
-    }
+    @GetMapping("/eliminar/{id}")  // Eliminar Boton
+    public String eliminar(@PathVariable Long id, Model model ) {
+        if (id > 0 ) {
+            clienteService.eliminar(id);
+        }
+        return "redirect:/listado";   // equivalente a  @GetMapping ("/listado")
+    }  
+    
+    @GetMapping("/form/{id}")      // Editar boton
+    public String actualizar(@PathVariable Long id , Model model) {
+        Optional<Cliente> cliente = null;
+        if (id > 0) {
+            cliente = clienteService.getCliente(id);
+            System.out.println("No. de cliente: " +  cliente.get().getIdCliente());
+        } else {
+            return "redirect:listado";
+        }
+
+        model.addAttribute("titulo", "Editar Cliente");
+        model.addAttribute("cliente", cliente);
+        return "form";
+    }    
+}
     
 
-}
+
